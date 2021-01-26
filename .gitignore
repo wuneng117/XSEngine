@@ -1,0 +1,5 @@
+.vscode
+*.meta
+/Library
+/Logs
+/obj
