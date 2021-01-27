@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{7f857feb-b32a-9314-4d8d-a94d4ccbae6b}</ProjectGuid>
+    <ProjectGuid>{cfeb32d0-904b-ed69-65fe-ab0ddc7d3447}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -37,40 +37,40 @@
   </PropertyGroup>
   <ItemGroup>
      <Compile Include="Assets\XSEngine\Common\Emitter\Emitter.cs" />
-     <Compile Include="Assets\XSEngine\CoreSimple\PokeGame\Scripts\UI\GameScene.cs" />
+     <Compile Include="Assets\XSEngine\CoreSimple\PokerGame\Scripts\UI\GameScene.cs" />
      <Compile Include="Assets\XSEngine\Common\CountDown.cs" />
      <Compile Include="Assets\XSEngine\Core\Manager\CoreBattleMgr.cs" />
      <Compile Include="Assets\XSEngine\Core\Phase\CoreBattleFSMBase.cs" />
      <Compile Include="Assets\XSEngine\Core\Card\CoreCardList.cs" />
-     <Compile Include="Assets\XSEngine\Role\Attr.cs" />
+     <Compile Include="Assets\XSEngine\Common\Role\Attr.cs" />
      <Compile Include="Assets\XSEngine\Core\Card\CoreCardFactory.cs" />
      <Compile Include="Assets\XSEngine\Core\Define\CoreConfig.cs" />
      <Compile Include="Assets\XSEngine\Core\Manager\CoreITurnTigger.cs" />
-     <Compile Include="Assets\XSEngine\Role\IAttr.cs" />
+     <Compile Include="Assets\XSEngine\Common\Role\IAttr.cs" />
      <Compile Include="Assets\XSEngine\Core\Phase\CorePhaseTurnBegin.cs" />
      <Compile Include="Assets\XSEngine\Core\Phase\CorePhaseGameStart.cs" />
-     <Compile Include="Assets\XSEngine\Role\HP.cs" />
+     <Compile Include="Assets\XSEngine\Common\Role\HP.cs" />
      <Compile Include="Assets\XSEngine\Core\Common\CoreFactory.cs" />
      <Compile Include="Assets\XSEngine\Core\Common\CoreUIEmitter.cs" />
      <Compile Include="Assets\XSEngine\Core\Manager\CoreManagerFactory.cs" />
      <Compile Include="Assets\XSEngine\Core\Define\CoreConstant.cs" />
      <Compile Include="Assets\XSEngine\Define\Config.cs" />
      <Compile Include="Assets\XSEngine\Core\Phase\CorePhaseGameEnd.cs" />
-     <Compile Include="Assets\XSEngine\CoreSimple\PokeGame\Scripts\UI\PlayerPanel.cs" />
+     <Compile Include="Assets\XSEngine\CoreSimple\PokerGame\Scripts\UI\PlayerPanel.cs" />
      <Compile Include="Assets\XSEngine\Core\Player\CorePlayerBase.cs" />
      <Compile Include="Assets\XSEngine\Define\Constant.cs" />
      <Compile Include="Assets\XSEngine\Core\Define\CoreFunc.cs" />
      <Compile Include="Assets\XSEngine\Core\Player\CorePlayerMgrBase.cs" />
-     <Compile Include="Assets\XSEngine\CoreSimple\PokeGame\Scripts\Logic\LogicDefine.cs" />
+     <Compile Include="Assets\XSEngine\CoreSimple\PokerGame\Scripts\Logic\LogicDefine.cs" />
      <Compile Include="Assets\XSEngine\Core\Card\CoreCardDeck.cs" />
      <Compile Include="Assets\XSEngine\Common\Emitter\EmitterItem.cs" />
-     <Compile Include="Assets\XSEngine\Role\IHP.cs" />
+     <Compile Include="Assets\XSEngine\Common\Role\IHP.cs" />
      <Compile Include="Assets\XSEngine\Core\Player\CorePlayerFactory.cs" />
      <Compile Include="Assets\XSEngine\Extension\Program.cs" />
      <Compile Include="Assets\XSEngine\Core\Card\CoreCard.cs" />
-     <Compile Include="Assets\XSEngine\CoreSimple\PokeGame\Scripts\Logic\LogicMgr.cs" />
+     <Compile Include="Assets\XSEngine\CoreSimple\PokerGame\Scripts\Logic\LogicMgr.cs" />
      <Compile Include="Assets\XSEngine\Common\MoneyBase.cs" />
-     <Compile Include="Assets\XSEngine\CoreSimple\PokeGame\Scripts\UI\CardNode.cs" />
+     <Compile Include="Assets\XSEngine\CoreSimple\PokerGame\Scripts\UI\CardNode.cs" />
      <Compile Include="Assets\XSEngine\Core\Phase\CorePhaseBase.cs" />
      <Compile Include="Assets\XSEngine\Core\Phase\CorePhaseTurnEnd.cs" />
     <Reference Include="UnityEngine">
@@ -608,31 +608,31 @@
         <HintPath>C:/Program Files/Unity/Hub/Editor/2020.1.0f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Xml.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Timeline.Editor">
-        <HintPath>E:/XSEngine6/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
+        <HintPath>E:/XSEngine/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VSCode.Editor">
-        <HintPath>E:/XSEngine6/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
+        <HintPath>E:/XSEngine/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
-        <HintPath>E:/XSEngine6/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+        <HintPath>E:/XSEngine/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-        <HintPath>E:/XSEngine6/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
+        <HintPath>E:/XSEngine/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Timeline">
-        <HintPath>E:/XSEngine6/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
+        <HintPath>E:/XSEngine/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Rider.Editor">
-        <HintPath>E:/XSEngine6/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
+        <HintPath>E:/XSEngine/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualStudio.Editor">
-        <HintPath>E:/XSEngine6/Library/ScriptAssemblies/Unity.VisualStudio.Editor.dll</HintPath>
+        <HintPath>E:/XSEngine/Library/ScriptAssemblies/Unity.VisualStudio.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-        <HintPath>E:/XSEngine6/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+        <HintPath>E:/XSEngine/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.UI">
-        <HintPath>E:/XSEngine6/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
+        <HintPath>E:/XSEngine/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
