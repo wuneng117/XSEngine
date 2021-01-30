@@ -31,11 +31,26 @@ namespace XSEngine.Core
 
         /// <summary> 初始化 </summary>
         /// <param name="turnTrigger">玩家做一些游戏操作的接口</param>
-        public virtual bool Init(int index, CoreITurnTrigger turnTrigger, CoreCardDeckBase publicDeck = null)
+        public virtual bool Init(int index,
+                                CoreITurnTrigger turnTrigger,
+                                CoreCardDeckBase publicDeck = null,
+                                Func<CorePlayerBase, CoreCardBase, bool> FuncCanUseCard = null,
+                                Action<CorePlayerBase, CoreCardBase> ActionOnUseCard = null,
+                                Action<CorePlayerBase> ActionOnGameStart = null,
+                                Action<CorePlayerBase> ActionOnGameEnd = null,
+                                Action<CorePlayerBase> ActionOnTurnBegin = null,
+                                Action<CorePlayerBase> ActionOnTurnEnd = null
+        )
         {
             Debug.Assert(turnTrigger != null);
             (this.Name, this.Index, this.TurnTrigger) = ("No." + index, index, turnTrigger);
             this.PublicDeck = publicDeck ?? CoreCardFactory.CreateCardDeck<CoreCardDeck>();
+            this.FuncCanUseCard = FuncCanUseCard;
+            this.ActionOnUseCard = ActionOnUseCard;
+            this.ActionOnGameStart = ActionOnGameStart;
+            this.ActionOnGameEnd = ActionOnGameEnd;
+            this.ActionOnTurnBegin = ActionOnTurnBegin;
+            this.ActionOnTurnEnd = ActionOnTurnEnd;
             return true;
         }
 
@@ -56,10 +71,10 @@ namespace XSEngine.Core
         /// 能不能用这张卡
         /// </summary>
         /// <param name="card"></param>
-        public Func<CoreCardBase, bool> FuncCanUseCard { protected get; set; }
+        protected Func<CorePlayerBase, CoreCardBase, bool> FuncCanUseCard { get; set; }
         protected virtual bool CanUseCard(CoreCardBase card)
         {
-            var ret = this.FuncCanUseCard != null ? this.FuncCanUseCard(card) : true;
+            var ret = this.FuncCanUseCard != null ? this.FuncCanUseCard(this, card) : true;
             return ret;
         }
 
@@ -67,42 +82,42 @@ namespace XSEngine.Core
         /// 用一张卡
         /// </summary>
         /// <param name="card"></param>
-        public Action<CoreCardBase> ActionUserCard { protected get; set; }
+        protected Action<CorePlayerBase, CoreCardBase> ActionOnUseCard { get; set; }
         public virtual void UseCard(CoreCardBase card)
         {
             if (!this.CanUseCard(card))
                 return;
 
-            this.ActionUserCard?.Invoke(card);
+            this.ActionOnUseCard?.Invoke(this, card);
             this.TurnTrigger.UseCard(card);
         }
         /************************* 用户回合响应 begin ***********************/
         /// <summary> 游戏开始 </summary>
-        public Action ActionOnGameStart { protected get; set; }
+        protected Action<CorePlayerBase> ActionOnGameStart { get; set; }
         public virtual void OnGameStart()
         {
-            this.ActionOnGameStart?.Invoke();
+            this.ActionOnGameStart?.Invoke(this);
         }
 
         /// <summary> 你的回合开始 </summary>
-        public Action ActionOnTurnBegin { protected get; set; }
+        protected Action<CorePlayerBase> ActionOnTurnBegin { get; set; }
         public virtual void OnTurnBegin()
         {
-            this.ActionOnTurnBegin?.Invoke();
+            this.ActionOnTurnBegin?.Invoke(this);
         }
 
         /// <summary> 你的回合结束 </summary>
-        public Action ActionOnTurnEnd { protected get; set; }
+        protected Action<CorePlayerBase> ActionOnTurnEnd { get; set; }
         public virtual void OnTurnEnd()
         {
-            this.ActionOnTurnEnd?.Invoke();
+            this.ActionOnTurnEnd?.Invoke(this);
         }
 
         /// <summary> 游戏结束 </summary>
-        public Action ActionOnGameEnd { protected get; set; }
+        protected Action<CorePlayerBase> ActionOnGameEnd { get; set; }
         public virtual void OnGameEnd()
         {
-            this.ActionOnGameEnd?.Invoke();
+            this.ActionOnGameEnd?.Invoke(this);
         }
         /************************* 用户回合响应  end  ***********************/
 

@@ -20,11 +20,12 @@ namespace XSEngine.CoreSimple.Poker
         public void InitGame()
         {
             // 初始化战斗管理类
-            this.Mgr = CoreManagerFactory.CreateBattleMgr<CoreBattleMgr>();
-            // 公共牌堆的牌抽完了算游戏结束
-            this.Mgr.FuncCheckGameEnd = () => this.Mgr.PlayerMgr.GetCurPlayer().PublicDeck.Count <= 0;
-            // 玩家打一张牌之后结束他的回合
-            this.Mgr.ActionOnUseCard = (card) => this.Mgr.TurnEnd();
+            this.Mgr = CoreManagerFactory.CreateBattleMgr<CoreBattleMgr>(
+                // 公共牌堆的牌抽完了算游戏结束
+                FuncCheckGameEnd: (mgr) => mgr.PlayerMgr.GetCurPlayer().PublicDeck.Count <= 0,
+                // 玩家打一张牌之后结束他的回合
+                ActionOnUseCard: (mgr, card) => mgr.TurnEnd()
+            );
 
             // 初始化玩家管理类
             var playerMgr = CorePlayerFactory.CreatePlayerMgr<CorePlayerMgr>();
@@ -44,50 +45,54 @@ namespace XSEngine.CoreSimple.Poker
             // 生成玩家，生成最大数量
             for (var i = 0; i < Core.Const.Config.PLAYER_NUM_MAX; i++)
             {
-                var player = CorePlayerFactory.CreatePlayer<CorePlayer>(i, this.Mgr, this.PublicDeck);
                 // 这个比较特殊，玩家共用一个出牌堆
-                player.PlayAreaCards = this.PlayAreaCards;
+                var newPlayer = CorePlayerFactory.CreatePlayer<CorePlayer>(
+                    index: i,
+                    turnTrigger: this.Mgr,
+                    publicDeck: this.PublicDeck,
 
-                // 玩家回合开始响应事件
-                player.ActionOnTurnBegin = () =>
-                {
-                    // 抽一张牌，然后看看是否游戏结束
-                    player.HandCards.Add(player.PublicDeck.RemoveTop());
-                    player.TryGameEnd();
-                    // 发送事件刷新UI
-                    CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_HANDCARDS_CHANGED, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
-                    CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_PUBLICDECK_CHANGED, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
-                };
+                    // 玩家回合开始响应事件
+                    ActionOnTurnBegin: (player) =>
+                    {
+                        // 抽一张牌，然后看看是否游戏结束
+                        player.HandCards.Add(player.PublicDeck.RemoveTop());
+                        player.TryGameEnd();
+                        // 发送事件刷新UI
+                        CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_HANDCARDS_CHANGED, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
+                        CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_PUBLICDECK_CHANGED, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
+                    },
 
-                // 玩家游戏开始响应事件
-                player.ActionOnGameStart = () =>
-                {
-                    // 洗牌，抽起始手牌
-                    player.PublicDeck.Shuffle();
-                    player.HandCards.Add(player.PublicDeck.RemoveTop(LogicDefine.START_HAND_CARDS));
+                    // 玩家游戏开始响应事件
+                    ActionOnGameStart: (player) =>
+                    {
+                        // 洗牌，抽起始手牌
+                        player.PublicDeck.Shuffle();
+                        player.HandCards.Add(player.PublicDeck.RemoveTop(LogicDefine.START_HAND_CARDS));
 
-                    // 发送事件刷新UI
-                    CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_HANDCARDS_CHANGED, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
-                    CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_PUBLICDECK_CHANGED, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
-                };
+                        // 发送事件刷新UI
+                        CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_HANDCARDS_CHANGED, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
+                        CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_PUBLICDECK_CHANGED, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
+                    },
 
-                // 玩家能否使用这张卡的响应事件
-                player.FuncCanUseCard = (card) => this.Mgr.IsCurPlayer(player) && player.HandCards.Count > 0 && player.HandCards.Contains(card);
+                    // 玩家能否使用这张卡的响应事件
+                    FuncCanUseCard: (player, card) => this.Mgr.IsCurPlayer(player) && player.HandCards.Count > 0 && player.HandCards.Contains(card),
 
-                // 玩家使用这张卡的响应事件
-                player.ActionUserCard = (card) =>
-                {
-                    // 再判断下是否出牌成功
-                    if (!player.HandCards.Remove(card))
-                        return;
-                    // 使用的牌打到出牌区
-                    player.PlayAreaCards.Add(card);
-                    // 发送事件刷新UI
-                    CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_HANDCARDS_CHANGED, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
-                    CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_PLAYAREACARDS_CHANGED, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
-                };
+                    // 玩家使用这张卡的响应事件
+                    ActionOnUseCard: (player, card) =>
+                    {
+                        // 再判断下是否出牌成功
+                        if (!player.HandCards.Remove(card))
+                            return;
+                        // 使用的牌打到出牌区
+                        player.PlayAreaCards.Add(card);
+                        // 发送事件刷新UI
+                        CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_HANDCARDS_CHANGED, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
+                        CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_PLAYAREACARDS_CHANGED, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
+                    }
+                );
 
-                playerMgr.AddPlayer(player);
+                newPlayer.PlayAreaCards = this.PlayAreaCards;
+                playerMgr.AddPlayer(newPlayer);
             }
         }
     }

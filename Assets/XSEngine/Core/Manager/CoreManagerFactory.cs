@@ -1,3 +1,5 @@
+using System;
+
 namespace XSEngine.Core
 {
     /// <summary>
@@ -15,10 +17,17 @@ namespace XSEngine.Core
         /// 工厂模式创建BattleMgr
         /// </summary>
         /// <returns></returns>
-        public static T CreateBattleMgr<T>() where T : CoreBattleMgrBase, new()
+        public static T CreateBattleMgr<T>(
+            Action<CoreBattleMgrBase, CoreCardBase> ActionOnUseCard = null,
+            Action<CoreBattleMgrBase> ActionOnGameStart = null,
+            Action<CoreBattleMgrBase> ActionOnGameEnd = null,
+            Action<CoreBattleMgrBase> ActionOnTurnBegin = null,
+            Action<CoreBattleMgrBase> ActionOnTurnEnd = null,
+            Func<CoreBattleMgrBase, bool> FuncCheckGameEnd = null
+        ) where T : CoreBattleMgrBase, new()
         {
             var ret = new T();
-            ret.Init();
+            ret.Init(ActionOnUseCard, ActionOnGameStart, ActionOnGameEnd, ActionOnTurnBegin, ActionOnTurnEnd, FuncCheckGameEnd);
             return ret;
         }
         /************************* 所有框架内的对象都是由工厂模式创建的  end  ***********************/

@@ -28,17 +28,33 @@ namespace XSEngine.Core
         /// 初始化
         /// </summary>
         /// <returns></returns>
-        public virtual bool Init() => true;
+        public virtual bool Init(
+            Action<CoreBattleMgrBase, CoreCardBase> ActionOnUseCard = null,
+            Action<CoreBattleMgrBase> ActionOnGameStart = null,
+            Action<CoreBattleMgrBase> ActionOnGameEnd = null,
+            Action<CoreBattleMgrBase> ActionOnTurnBegin = null,
+            Action<CoreBattleMgrBase> ActionOnTurnEnd = null,
+            Func<CoreBattleMgrBase, bool> FuncCheckGameEnd = null
+        )
+        {
+            this.ActionOnUseCard = ActionOnUseCard;
+            this.ActionOnGameStart = ActionOnGameStart;
+            this.ActionOnGameEnd = ActionOnGameEnd;
+            this.ActionOnTurnBegin = ActionOnTurnBegin;
+            this.ActionOnTurnEnd = ActionOnTurnEnd;
+            this.FuncCheckGameEnd = FuncCheckGameEnd;
+            return true;
+        }
 
         /// <summary> 用一张卡的回调 </summary>
-        public Action<CoreCardBase> ActionOnUseCard { protected get; set; }
+        protected Action<CoreBattleMgrBase, CoreCardBase> ActionOnUseCard { get; set; }
         /// <summary>
         /// 用一张卡
         /// </summary>
         /// <param name="card">用的卡</param>
         public virtual void UseCard(CoreCardBase card)
         {
-            this.ActionOnUseCard?.Invoke(card);
+            this.ActionOnUseCard?.Invoke(this, card);
         }
 
         /// <summary>
@@ -50,11 +66,11 @@ namespace XSEngine.Core
 
         /************************* 战斗阶段管理 begin ***********************/
         /// <summary> 游戏开始的回调 </summary>
-        public Action ActionOnGameStart { protected get; set; }
+        protected Action<CoreBattleMgrBase> ActionOnGameStart { get; set; }
         /// <summary> 游戏开始 </summary>
         public virtual void GameStart()
         {
-            this.ActionOnGameStart?.Invoke();
+            this.ActionOnGameStart?.Invoke(this);
             this.Change<CoreBattleMgrBase>(CoreManagerFactory.CreatePhaseGameStart<CorePhaseGameStart>(), this);
         }
 
@@ -68,36 +84,36 @@ namespace XSEngine.Core
         }
 
         /// <summary> 是否游戏结束的回调 </summary>
-        public Func<bool> FuncCheckGameEnd { protected get; set; }
+        protected Func<CoreBattleMgrBase, bool> FuncCheckGameEnd { get; set; }
         /// <summary> 是否游戏结束 </summary>
         public virtual bool CheckGameEnd()
         {
-            var ret = this.FuncCheckGameEnd != null ? this.FuncCheckGameEnd() : false;
+            var ret = this.FuncCheckGameEnd != null ? this.FuncCheckGameEnd(this) : false;
             return ret;
         }
 
-        public Action ActionOnGameEnd { protected get; set; }
+        protected Action<CoreBattleMgrBase> ActionOnGameEnd { get; set; }
         /// <summary> 游戏结束 </summary>
         public virtual void GameEnd()
         {
-            this.ActionOnGameEnd?.Invoke();
+            this.ActionOnGameEnd?.Invoke(this);
             this.Change<CoreBattleMgrBase>(CoreManagerFactory.CreatePhaseGameEnd<CorePhaseGameEnd>(), this);
         }
 
-        public Action ActionOnTurnBegin { protected get; set; }
+        protected Action<CoreBattleMgrBase> ActionOnTurnBegin { get; set; }
         /// <summary> 回合开始 </summary>
         public virtual void TurnBegin()
         {
-            this.ActionOnTurnBegin?.Invoke();
+            this.ActionOnTurnBegin?.Invoke(this);
             this.AddRound();
             this.Change<CoreBattleMgrBase>(CoreManagerFactory.CreatePhaseTurnBegin<CorePhaseTurnBegin>(), this);
         }
 
-        public Action ActionOnTurnEnd { protected get; set; }
+        protected Action<CoreBattleMgrBase> ActionOnTurnEnd { get; set; }
         /// <summary> 回合结束 </summary>
         public virtual void TurnEnd()
         {
-            this.ActionOnTurnEnd?.Invoke();
+            this.ActionOnTurnEnd?.Invoke(this);
             this.Change<CoreBattleMgrBase>(CoreManagerFactory.CreatePhaseTurnEnd<CorePhaseTurnEnd>(), this);
         }
         /*************************  战斗阶段管理 end  ***********************/

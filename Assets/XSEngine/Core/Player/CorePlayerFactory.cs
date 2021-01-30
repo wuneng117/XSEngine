@@ -16,13 +16,22 @@ namespace XSEngine.Core
         /// <param name="index">玩家序号</param>
         /// <param name="turnTrigger">玩家做一些游戏操作的接口</param>
         /// <returns></returns>
-        public static T CreatePlayer<T>(int index, CoreITurnTrigger turnTrigger, CoreCardDeckBase publicDeck) where T : CorePlayer, new()
+        public static T CreatePlayer<T>(int index,
+                                        CoreITurnTrigger turnTrigger,
+                                        CoreCardDeckBase publicDeck = null,
+                                        Func<CorePlayerBase, CoreCardBase, bool> FuncCanUseCard = null,
+                                        Action<CorePlayerBase, CoreCardBase> ActionOnUseCard = null,
+                                        Action<CorePlayerBase> ActionOnGameStart = null,
+                                        Action<CorePlayerBase> ActionOnGameEnd = null,
+                                        Action<CorePlayerBase> ActionOnTurnBegin = null,
+                                        Action<CorePlayerBase> ActionOnTurnEnd = null
+        ) where T : CorePlayer, new()
         {
             if (index < 0 || turnTrigger == null)
                 return null;
 
             var ret = new T();
-            ret.Init(index, turnTrigger, publicDeck);
+            ret.Init(index, turnTrigger, publicDeck, FuncCanUseCard, ActionOnUseCard, ActionOnGameStart, ActionOnGameEnd, ActionOnTurnBegin, ActionOnTurnEnd);
             // // 没有牌组，所有卡入手牌
             // role.GetCardIdArray().ForEach(id => this.HandCards.Add(BladeCard.Create(CardDataManager.Instance.GetItem(id))));
             return ret;
