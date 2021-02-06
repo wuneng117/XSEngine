@@ -119,6 +119,7 @@
     <Compile Include="Assets\XSEngine\Base\Common\XSFactory.cs" />
     <Compile Include="Assets\XSEngine\Core\Player\GameEventPlayer.cs" />
     <Compile Include="Assets\XSEngine\Core\Common\GameEvent.cs" />
+    <Compile Include="Assets\XSEngine\Core\Phase\GameEventPhase.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

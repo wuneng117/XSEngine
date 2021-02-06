@@ -13,36 +13,24 @@ namespace XSEngine.Core
         public override void InitEvent()
         {
             base.InitEvent();
-            CoreGameEventEmitter.Instance.On(GameEvent.Event.ON_TURN_END, mgr =>
+            this.EventEmitter.On(GameEventPhase.Event.ON_ENTER, mgr =>
             {
                 var player = mgr.PlayerMgr.GetCurPlayer();
                 player.OnTurnEnd();
-            }, GameEvent.Priority.TurnEnd.CURPLAYER_ON_TURN_END);
-        }
+            }, GameEventPhase.Priority.TurnEnd.CURPLAYER_ON_TURN_END);
 
-        /// <summary> 状态进入 </summary>
-        public override void OnEnter<T>(T mgr)
-        {
-            base.OnEnter(mgr);
-            CoreGameEventEmitter.Instance.Emit(GameEvent.Event.ON_TURN_END, mgr);
-            var player = mgr.PlayerMgr.GetCurPlayer();
-            // 发送事件
-            CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_PLAYER_TURNEND, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
+            this.EventEmitter.On(GameEventPhase.Event.ON_ENTER, mgr => 
+            {
+                var player = mgr.PlayerMgr.GetCurPlayer();
+                CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_PLAYER_TURN_END, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
+            }, GameEventPhase.Priority.GameStart.UI);
+
             // 等OnEnter操作完成后切换到turnbegin
-            mgr.TurnBegin();
+            this.EventEmitter.On(GameEventPhase.Event.ON_ENTER, mgr =>
+            {
+                mgr.PlayerMgr.SwitchPlayer();
+                mgr.TurnBegin();
+            } ,  GameEventPhase.Priority.TurnEnd.PHASE_CHANGE);
         }
-
-        /// <summary> 预留接口，每帧更新 </summary>
-        public override void Update<T>(T mgr)
-        {
-
-        }
-
-        /// <summary> 状态退出 </summary>
-        public override void OnExit<T>(T mgr)
-        {
-            mgr.PlayerMgr.SwitchPlayer();
-        }
-
     }
 }

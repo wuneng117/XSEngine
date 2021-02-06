@@ -19,10 +19,10 @@ namespace XSEngine.Core
         }
 
         /************************* 阶段事件 begin ***********************/
-        public static string UI_PLAYER_GAMESTART = "UI_PLAYER_GAMESTART";
-        public static string UI_PLAYER_GAMEEND = "UI_PLAYER_GAMEEND";
-        public static string UI_PLAYER_TURNBEGIN = "UI_PLAYER_TURNBEGIN";
-        public static string UI_PLAYER_TURNEND = "UI_PLAYER_TURNEND";
+        public static string UI_PLAYER_GAME_START = "UI_PLAYER_GAMESTART";
+        public static string UI_PLAYER_GAME_END = "UI_PLAYER_GAMEEND";
+        public static string UI_PLAYER_TURN_BEGIN = "UI_PLAYER_TURNBEGIN";
+        public static string UI_PLAYER_TURN_END = "UI_PLAYER_TURNEND";
         /************************* 阶段事件  end  ***********************/
 
         /************************* 牌变动 begin ***********************/

@@ -7,18 +7,12 @@ namespace XSEngine.Core
     {
         protected static CorePhaseBase msInstance;
         public static CorePhaseBase Instance { get => msInstance = msInstance ?? CoreManagerFactory.CreatePhaseGameEnd<CorePhaseGameEnd>(); }
-
-        /// <summary> 状态进入 </summary>
-        public override void OnEnter<T>(T mgr)
+        
+        /// <summary> 注册GameEvent </summary>
+        public override void InitEvent()
         {
-            base.OnEnter(mgr);
-            CoreGameEventEmitter.Instance.Emit(GameEvent.Event.ON_GAME_END);
-            CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_PLAYER_GAMEEND, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(-1));
+            base.InitEvent();
+            this.EventEmitter.On(GameEventPhase.Event.ON_ENTER, mgr => CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_PLAYER_GAME_END, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(-1)),  GameEventPhase.Priority.GameEnd.UI);
         }
-
-        // /// <summary> 状态退出 </summary>
-        // public override void OnExit<T>(T mgr) {}
-        // /// <summary> 预留接口，每帧更新 </summary>
-        // public override void Update<T>(T mgr) {}
     }
 }

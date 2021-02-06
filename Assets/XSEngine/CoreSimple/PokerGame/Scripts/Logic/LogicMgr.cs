@@ -104,7 +104,5 @@ namespace XSEngine.CoreSimple.Poker
                 playerMgr.AddPlayer(newPlayer);
             }
         }
-        /// <summary> 别忘了每帧更新 </summary>
-        public void Update() => this.Mgr.Update(this.Mgr);
     }
 }

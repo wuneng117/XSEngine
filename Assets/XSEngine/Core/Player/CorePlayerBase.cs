@@ -22,7 +22,7 @@ namespace XSEngine.Core
 
         /// <summary> 玩家做一些游戏操作的接口 </summary>
         protected CoreITurnTrigger TurnTrigger { get; set; }
-        /// <summary> GameEvent事件分发，因为很多响应事件有严格的优先级要求 </summary>
+        /// <summary> GameEventPlayer事件分发，因为很多响应事件有严格的优先级要求 </summary>
         protected Emitter<string, Action> EventEmitter {get; set; }
         protected CoreCardDeckBase Deck { get; } = CoreCardFactory.CreateCardDeck<CoreCardDeck>(); // 牌组
         public CoreCardDeckBase PublicDeck { get; set; } // 公共牌组

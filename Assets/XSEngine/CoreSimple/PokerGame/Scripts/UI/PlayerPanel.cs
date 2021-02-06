@@ -25,17 +25,17 @@ public class PlayerPanel : MonoBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
-        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_PLAYER_GAMESTART, (data) => this.useCardTips.SetActive(this.Player.Index == data.PlayerIndex), 0, this);
-        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_PLAYER_TURNBEGIN, (data) => this.useCardTips.SetActive(this.Player.Index == data.PlayerIndex), 0, this);
-        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_PLAYER_TURNEND, (data) => this.useCardTips.SetActive(this.Player.Index == data.PlayerIndex), 0, this);
+        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_PLAYER_GAME_START, (data) => this.useCardTips.SetActive(this.Player.Index == data.PlayerIndex), 0, this);
+        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_PLAYER_TURN_BEGIN, (data) => this.useCardTips.SetActive(this.Player.Index == data.PlayerIndex), 0, this);
+        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_PLAYER_TURN_END, (data) => this.useCardTips.SetActive(this.Player.Index == data.PlayerIndex), 0, this);
         CoreUIEmitter.Instance.On(CoreUIEmitter.UI_HANDCARDS_CHANGED, (data) => { if (this.Player.Index == data.PlayerIndex) this.RefreshPlayerHand(); }, 0, this);
     }
 
     private void OnDestroy()
     {
-        CoreUIEmitter.Instance.Off(CoreUIEmitter.UI_PLAYER_GAMESTART, this);
-        CoreUIEmitter.Instance.Off(CoreUIEmitter.UI_PLAYER_TURNBEGIN, this);
-        CoreUIEmitter.Instance.Off(CoreUIEmitter.UI_PLAYER_TURNEND, this);
+        CoreUIEmitter.Instance.Off(CoreUIEmitter.UI_PLAYER_GAME_START, this);
+        CoreUIEmitter.Instance.Off(CoreUIEmitter.UI_PLAYER_TURN_BEGIN, this);
+        CoreUIEmitter.Instance.Off(CoreUIEmitter.UI_PLAYER_TURN_END, this);
         CoreUIEmitter.Instance.Off(CoreUIEmitter.UI_HANDCARDS_CHANGED, this);
     }
 

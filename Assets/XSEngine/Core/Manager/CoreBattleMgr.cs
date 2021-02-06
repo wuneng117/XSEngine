@@ -77,7 +77,7 @@ namespace XSEngine.Core
         public virtual void GameStart()
         {
             this.ActionOnGameStart?.Invoke(this);
-            this.Change<CoreBattleMgrBase>(CorePhaseGameStart.Instance, this);
+            this.Change(CorePhaseGameStart.Instance, this);
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace XSEngine.Core
         public virtual void GameEnd()
         {
             this.ActionOnGameEnd?.Invoke(this);
-            this.Change<CoreBattleMgrBase>(CorePhaseGameEnd.Instance, this);
+            this.Change(CorePhaseGameEnd.Instance, this);
         }
 
         protected Action<CoreBattleMgrBase> ActionOnTurnBegin { get; set; }
@@ -112,7 +112,7 @@ namespace XSEngine.Core
         {
             this.ActionOnTurnBegin?.Invoke(this);
             this.AddRound();
-            this.Change<CoreBattleMgrBase>(CorePhaseTurnBegin.Instance, this);
+            this.Change(CorePhaseTurnBegin.Instance, this);
         }
 
         protected Action<CoreBattleMgrBase> ActionOnTurnEnd { get; set; }
@@ -120,7 +120,7 @@ namespace XSEngine.Core
         public virtual void TurnEnd()
         {
             this.ActionOnTurnEnd?.Invoke(this);
-            this.Change<CoreBattleMgrBase>(CorePhaseTurnEnd.Instance, this);
+            this.Change(CorePhaseTurnEnd.Instance, this);
         }
         /*************************  战斗阶段管理 end  ***********************/
     }

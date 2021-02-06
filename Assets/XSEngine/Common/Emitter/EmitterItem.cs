@@ -67,7 +67,7 @@ namespace XSEngine
             newItem.target = target;
 
             this._slotArray.Add(newItem);
-            this._slotArray.Sort((a, b) => b.priority - a.priority);
+            this._slotArray.Sort((a, b) => a.priority - b.priority);
         }
 
         /// <summary>
