@@ -12,6 +12,8 @@ namespace XSEngine.Core {
     /// </summary>
     public abstract class CorePhaseBase : IPhaseBase
     {
+        /// <summary> 注册GameEvent </summary>
+        public virtual void InitEvent() { }
         /// <summary> 状态进入 </summary>
         public virtual void OnEnter<T>(T mgr) where T : CoreBattleMgrBase { }
         /// <summary> 状态退出 </summary>

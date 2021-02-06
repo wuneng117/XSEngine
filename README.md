@@ -23,5 +23,7 @@
 # Core介绍
 再说吧。
 
+## Emitter
+通过system.Action，实现一个简单的nodejs的EventEmitter。
 
         

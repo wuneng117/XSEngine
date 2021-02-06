@@ -22,7 +22,8 @@ namespace XSEngine.Core
 
         /// <summary> 玩家做一些游戏操作的接口 </summary>
         protected CoreITurnTrigger TurnTrigger { get; set; }
-
+        /// <summary> GameEvent事件分发，因为很多响应事件有严格的优先级要求 </summary>
+        protected Emitter<string, Action> EventEmitter {get; set; }
         protected CoreCardDeckBase Deck { get; } = CoreCardFactory.CreateCardDeck<CoreCardDeck>(); // 牌组
         public CoreCardDeckBase PublicDeck { get; set; } // 公共牌组
         public CoreCardListBase HandCards { get; } = CoreCardFactory.CreateCardList<CoreCardList>(); // 手牌
@@ -44,13 +45,18 @@ namespace XSEngine.Core
         {
             Debug.Assert(turnTrigger != null);
             (this.Name, this.Index, this.TurnTrigger) = ("No." + index, index, turnTrigger);
+            this.EventEmitter = CorePlayerFactory.CreateGameEventPlayerEmitter();
             this.PublicDeck = publicDeck ?? CoreCardFactory.CreateCardDeck<CoreCardDeck>();
             this.FuncCanUseCard = FuncCanUseCard;
             this.ActionOnUseCard = ActionOnUseCard;
             this.ActionOnGameStart = ActionOnGameStart;
+            this.InitOnGameStart();
             this.ActionOnGameEnd = ActionOnGameEnd;
+            this.InitOnGameEnd();
             this.ActionOnTurnBegin = ActionOnTurnBegin;
+            this.InitOnTurnBegin();
             this.ActionOnTurnEnd = ActionOnTurnEnd;
+            this.InitOnTurnEnd();
             return true;
         }
 
@@ -83,42 +89,36 @@ namespace XSEngine.Core
         /// </summary>
         /// <param name="card"></param>
         protected Action<CorePlayerBase, CoreCardBase> ActionOnUseCard { get; set; }
-        public virtual void UseCard(CoreCardBase card)
+        public virtual bool UseCard(CoreCardBase card)
         {
             if (!this.CanUseCard(card))
-                return;
+                return false;
 
             this.ActionOnUseCard?.Invoke(this, card);
             this.TurnTrigger.UseCard(card);
+            return true;
         }
         /************************* 用户回合响应 begin ***********************/
         /// <summary> 游戏开始 </summary>
         protected Action<CorePlayerBase> ActionOnGameStart { get; set; }
-        public virtual void OnGameStart()
-        {
-            this.ActionOnGameStart?.Invoke(this);
-        }
-
-        /// <summary> 你的回合开始 </summary>
-        protected Action<CorePlayerBase> ActionOnTurnBegin { get; set; }
-        public virtual void OnTurnBegin()
-        {
-            this.ActionOnTurnBegin?.Invoke(this);
-        }
-
-        /// <summary> 你的回合结束 </summary>
-        protected Action<CorePlayerBase> ActionOnTurnEnd { get; set; }
-        public virtual void OnTurnEnd()
-        {
-            this.ActionOnTurnEnd?.Invoke(this);
-        }
+        protected virtual void InitOnGameStart() => this.EventEmitter.On(GameEventPlayer.Event.ON_GAME_START, () => this.ActionOnGameStart?.Invoke(this), GameEventPlayer.Priority.GameStart.ACTION);
+        public virtual void OnGameStart() => this.EventEmitter.Emit(GameEventPlayer.Event.ON_GAME_START);
 
         /// <summary> 游戏结束 </summary>
         protected Action<CorePlayerBase> ActionOnGameEnd { get; set; }
-        public virtual void OnGameEnd()
-        {
-            this.ActionOnGameEnd?.Invoke(this);
-        }
+        protected virtual void InitOnGameEnd() =>this.EventEmitter.On(GameEventPlayer.Event.ON_GAME_END, () => this.ActionOnGameEnd?.Invoke(this), GameEventPlayer.Priority.GameEnd.ACTION);
+        public virtual void OnGameEnd() => this.EventEmitter.Emit(GameEventPlayer.Event.ON_GAME_END);
+
+        /// <summary> 你的回合开始 </summary>
+        protected Action<CorePlayerBase> ActionOnTurnBegin { get; set; }
+        protected virtual void InitOnTurnBegin() =>this.EventEmitter.On(GameEventPlayer.Event.ON_TURN_BEGIN, () => this.ActionOnTurnBegin?.Invoke(this), GameEventPlayer.Priority.TurnBegin.ACTION);
+        public virtual void OnTurnBegin() => this.EventEmitter.Emit(GameEventPlayer.Event.ON_TURN_BEGIN);
+
+        /// <summary> 你的回合结束 </summary>
+        protected Action<CorePlayerBase> ActionOnTurnEnd { get; set; }
+        protected virtual void InitOnTurnEnd() =>this.EventEmitter.On(GameEventPlayer.Event.ON_TURN_END, () => this.ActionOnTurnEnd?.Invoke(this), GameEventPlayer.Priority.TurnEnd.ACTION);
+        public virtual void OnTurnEnd() => this.EventEmitter.Emit(GameEventPlayer.Event.ON_TURN_END);
+
         /************************* 用户回合响应  end  ***********************/
 
         /************************* 用户操作 begin ***********************/
@@ -129,6 +129,5 @@ namespace XSEngine.Core
         /// <summary> 看看游戏是不是结束了 </summary>
         public void TryGameEnd() => this.TurnTrigger.TryGameEnd();
         /************************* 用户操作  end  ***********************/
-
     }
 }

@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 namespace XSEngine.Core
 {
@@ -10,6 +9,9 @@ namespace XSEngine.Core
     public class CorePlayerFactory
     {
         /************************* 所有框架内的对象都是由工厂模式创建的 begin ***********************/
+        // GameEvent事件
+        public static Emitter<string, Action> CreateGameEventPlayerEmitter() => new Emitter<string, Action>();
+
         /// <summary>
         /// 工厂模式创建
         /// </summary>

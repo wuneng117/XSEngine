@@ -6,12 +6,26 @@ namespace XSEngine.Core
     /// </summary>
     public class CorePhaseTurnBegin : CorePhaseBase
     {
+        protected static CorePhaseBase msInstance;
+        public static CorePhaseBase Instance { get => msInstance = msInstance ?? CoreManagerFactory.CreatePhaseTurnBegin<CorePhaseTurnBegin>(); }
+
+        /// <summary> 注册GameEvent </summary>
+        public override void InitEvent()
+        {
+            base.InitEvent();
+            CoreGameEventEmitter.Instance.On(GameEvent.Event.ON_TURN_BEGIN, mgr =>
+            {
+                var player = mgr.PlayerMgr.GetCurPlayer();
+                player.OnTurnBegin();
+            }, GameEvent.Priority.TurnBegin.CURPLAYER_ON_TURN_BEGIN);
+        }
+
         /// <summary> 状态进入 </summary>
         public override void OnEnter<T>(T mgr)
         {
             base.OnEnter(mgr);
+            CoreGameEventEmitter.Instance.Emit(GameEvent.Event.ON_TURN_BEGIN, mgr);
             var player = mgr.PlayerMgr.GetCurPlayer();
-            player.OnTurnBegin();
             // 发送事件
             CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_PLAYER_TURNBEGIN, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
         }

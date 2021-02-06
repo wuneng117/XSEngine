@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using XSEngine.CoreSimple.Poker;
+using System.Collections.Generic;
 
 public class GameScene : MonoBehaviour
 {
@@ -11,6 +12,9 @@ public class GameScene : MonoBehaviour
     public CoreConfig config;   // 配置文件
     public GameObject panelPlayerArea;  // 出牌区节点
     public Text textPublickDeckNum; // 公共牌堆数量显示
+    [SerializeField]
+    private List<GameObject> playerPanelArray;
+    public List<GameObject> PlayerPanelArray { get => playerPanelArray; set => playerPanelArray = value; }
     public LogicMgr LogicMgr { get; private set; }  // 游戏管理
 
     void Awake()
@@ -20,10 +24,7 @@ public class GameScene : MonoBehaviour
         // 注册UI事件
         CoreUIEmitter.Instance.On(CoreUIEmitter.UI_PLAYAREACARDS_CHANGED, (data) => this.RefreshPlayerArea(), 0, this);
         // 刷新公共牌堆数量
-        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_PUBLICDECK_CHANGED, (data) => {
-            this.textPublickDeckNum.text = this.LogicMgr.PublicDeck.Count.ToString();
-            return true;
-        }, 0, this);
+        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_PUBLICDECK_CHANGED, (data) => this.textPublickDeckNum.text = this.LogicMgr.PublicDeck.Count.ToString(), 0, this);
     }
 
     void OnDestroy()
@@ -42,13 +43,18 @@ public class GameScene : MonoBehaviour
         this.LogicMgr = new LogicMgr();
         this.LogicMgr.InitGame();
         // 生成玩家UI节点
-        this.LogicMgr.Mgr.PlayerMgr.PlayerArray.ForEach(player =>
+        for (var i = 0; i < this.PlayerPanelArray.Count; i++)
         {
-            GameObject playerPanel = GameObject.Instantiate(this.playerPrefab);
-            playerPanel.transform.SetParent(this.canvas.transform);
-            var cpt = playerPanel.GetComponent<PlayerPanel>();
-            cpt.Init(player as CorePlayer);
-        });
+            var playerPanel = this.PlayerPanelArray[i];
+            var player = this.LogicMgr.Mgr.PlayerMgr.PlayerArray[i];
+            if (player != null)
+            {
+                var cpt = playerPanel.GetComponent<PlayerPanel>();
+                cpt.Init(player as CorePlayer);
+            }
+            else
+                playerPanel.SetActive(false);
+        }
     }
 
 
@@ -75,7 +81,7 @@ public class GameScene : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         this.LogicMgr.Mgr.GameStart();
     }

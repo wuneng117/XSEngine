@@ -25,10 +25,10 @@ public class PlayerPanel : MonoBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
-        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_PLAYER_GAMESTART, (data) => this.SetUseCardTips(false), 0, this);
-        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_PLAYER_TURNBEGIN, (data) => this.SetUseCardTips(this.Player.Index == data.PlayerIndex), 0, this);
-        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_PLAYER_TURNEND, (data) => this.SetUseCardTips(this.Player.Index == data.PlayerIndex), 0, this);
-        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_HANDCARDS_CHANGED, (data) => this.RefreshPlayerHand(this.Player.Index == data.PlayerIndex), 0, this);
+        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_PLAYER_GAMESTART, (data) => this.useCardTips.SetActive(this.Player.Index == data.PlayerIndex), 0, this);
+        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_PLAYER_TURNBEGIN, (data) => this.useCardTips.SetActive(this.Player.Index == data.PlayerIndex), 0, this);
+        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_PLAYER_TURNEND, (data) => this.useCardTips.SetActive(this.Player.Index == data.PlayerIndex), 0, this);
+        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_HANDCARDS_CHANGED, (data) => { if (this.Player.Index == data.PlayerIndex) this.RefreshPlayerHand(); }, 0, this);
     }
 
     private void OnDestroy()
@@ -39,13 +39,13 @@ public class PlayerPanel : MonoBehaviour
         CoreUIEmitter.Instance.Off(CoreUIEmitter.UI_HANDCARDS_CHANGED, this);
     }
 
-    private bool RefreshPlayerHand(bool v)
+    private void RefreshPlayerHand()
     {
-        if (v)
-        {
-            this.handCardNumText.text = this.Player.HandCards.Count.ToString();
-            this.ClearPanel();
+        this.handCardNumText.text = this.Player.HandCards.Count.ToString();
+        this.ClearPanel();
 
+        if (this.panelHand != null)
+        {
             this.Player.HandCards.ForEach(card =>
             {
                 var cardNode = GameObject.Instantiate(this.cardPrefab);
@@ -54,21 +54,15 @@ public class PlayerPanel : MonoBehaviour
                 cpt.Init(card as CoreCard, this.Player);
             });
         }
-        return true;
     }
 
     private void ClearPanel()
     {
-        for (var i = this.panelHand.transform.childCount - 1; i >= 0; i--)
-            Destroy(this.panelHand.transform.GetChild(i).gameObject);
-    }
-
-
-
-    private bool SetUseCardTips(bool val)
-    {
-        this.useCardTips.SetActive(val);
-        return true;
+        if (this.panelHand != null)
+        {
+            for (var i = this.panelHand.transform.childCount - 1; i >= 0; i--)
+                Destroy(this.panelHand.transform.GetChild(i).gameObject);
+        }
     }
 
     public void Init(CorePlayer player)

@@ -11,13 +11,6 @@ namespace XSEngine
         protected int UpdateTurn { get; set; } = 0;
 
         /// <summary>
-        /// 构造函数
-        /// </summary>
-        public CountDown()
-        {
-        }
-
-        /// <summary>
         /// 倒计时开始
         /// </summary>
         /// <param name="time">几回合倒计时</param>

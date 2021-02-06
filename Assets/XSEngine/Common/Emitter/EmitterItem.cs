@@ -6,11 +6,10 @@ namespace XSEngine
     /// <summary>
     /// 1个回调函数的类型结构
     /// </summary>
-    /// <typeparam name="DATA"></typeparam>
-    /// <typeparam name="TRESULT"></typeparam>
-    class EmitterItem<DATA, TRESULT>
+    /// <typeparam name="T">回调函数类型</typeparam>
+    class EmitterItem<T> where T : Delegate
     {
-        public Func<DATA, TRESULT> callback;
+        public T callback;
         public int priority;
         public object target;
     }
@@ -18,17 +17,17 @@ namespace XSEngine
     /// <summary>
     /// 1个事件对应的多个回调函数结构
     /// </summary>
-    /// <typeparam name="DATA"></typeparam>
-    class EmitterItems<DATA, TRESULT>
+    /// <typeparam name="T">回调函数类型</typeparam>
+    class EmitterItems<T> where T : Delegate
     {
-        List<EmitterItem<DATA, TRESULT>> _slotArray;
+        List<EmitterItem<T>> _slotArray;
 
         /// <summary>
         /// 构造函数
         /// </summary>
         public EmitterItems()
         {
-            this._slotArray = new List<EmitterItem<DATA, TRESULT>>();
+            this._slotArray = new List<EmitterItem<T>>();
         }
 
         /// <summary>
@@ -36,12 +35,12 @@ namespace XSEngine
         /// </summary>
         /// <param name="callback">函数对象</param>
         /// <returns></returns>
-        private EmitterItem<DATA, TRESULT> FindSlot(Func<DATA, TRESULT> callback)
+        private EmitterItem<T> FindSlot(T callback)
         {
             if (callback == null)
                 return null;
 
-            EmitterItem<DATA, TRESULT> ret = this._slotArray.Find(item => item.callback == callback);
+            EmitterItem<T> ret = this._slotArray.Find(item => item.callback == callback);
             return ret;
         }
 
@@ -52,17 +51,17 @@ namespace XSEngine
         /// <param name="priority">优先级</param>
         /// <param name="target">函数注册在哪个对象（可能不需要这个参数）</param>
         /// <returns></returns>
-        internal void SetSlot(Func<DATA, TRESULT> callback, int priority, object target = null)
+        internal void SetSlot(T callback, int priority, object target = null)
         {
             if (callback == null)
                 return;
 
             // 已经注册过了就不要注册了
-            EmitterItem<DATA, TRESULT> ret = this.FindSlot(callback);
+            EmitterItem<T> ret = this.FindSlot(callback);
             if (ret != null)
                 return;
 
-            EmitterItem<DATA, TRESULT> newItem = new EmitterItem<DATA, TRESULT>();
+            EmitterItem<T> newItem = new EmitterItem<T>();
             newItem.callback = callback;
             newItem.priority = priority;
             newItem.target = target;
@@ -71,12 +70,11 @@ namespace XSEngine
             this._slotArray.Sort((a, b) => b.priority - a.priority);
         }
 
-
         /// <summary>
         /// 触发事件回调
         /// </summary>
-        /// <param name="data">回调的参数</param>
-        internal void Emit(DATA data) => this._slotArray.ForEach(item => item.callback(data));
+        /// <param name="parameters">回调的参数</param>
+        internal void Emit(params object[] parameters) => this._slotArray.ForEach(item => item.callback.DynamicInvoke(parameters));
 
         /// <summary>
         /// 移除全部事件回调
@@ -87,7 +85,7 @@ namespace XSEngine
         /// 移除事件回调
         /// </summary>
         /// <param name="callback"></param>
-        internal void RemoveSlot(Func<DATA, TRESULT> callback)
+        internal void RemoveSlot(T callback)
         {
             if (callback == null)
                 return;

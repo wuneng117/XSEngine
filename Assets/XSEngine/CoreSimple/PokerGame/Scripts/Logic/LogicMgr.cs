@@ -1,3 +1,4 @@
+using System;
 using XSEngine.Core;
 
 namespace XSEngine.CoreSimple.Poker
@@ -22,7 +23,10 @@ namespace XSEngine.CoreSimple.Poker
             // 初始化战斗管理类
             this.Mgr = CoreManagerFactory.CreateBattleMgr<CoreBattleMgr>(
                 // 公共牌堆的牌抽完了算游戏结束
-                FuncCheckGameEnd: (mgr) => mgr.PlayerMgr.GetCurPlayer().PublicDeck.Count <= 0,
+                FuncCheckGameEnd: (mgr) => {
+                    // TODO 在这里是麻将的胡牌算法，就不写了
+                    return false;
+                },
                 // 玩家打一张牌之后结束他的回合
                 ActionOnUseCard: (mgr, card) => mgr.TurnEnd()
             );
@@ -31,11 +35,13 @@ namespace XSEngine.CoreSimple.Poker
             var playerMgr = CorePlayerFactory.CreatePlayerMgr<CorePlayerMgr>();
             this.Mgr.SetPlayerMgr(playerMgr);
 
-            // 生成公共牌堆，所有玩家共用一个
+            // 生成公共牌堆，所有玩家共用一个，麻将一共136张
             this.PublicDeck = CoreCardFactory.CreateCardDeck<CoreCardDeck>();
             for (var i = 0; i < LogicDefine.START_PUBLIC_CARDS; i++)
             {
-                var card = CoreCardFactory.CreateCard<CoreCard>(i, "No." + i);
+                // 每种4张，共34种
+                var index = (int)(i/4);
+                var card = CoreCardFactory.CreateCard<CoreCard>(index, "No." + index);
                 this.PublicDeck.Add(card);
             }
 
@@ -60,6 +66,9 @@ namespace XSEngine.CoreSimple.Poker
                         // 发送事件刷新UI
                         CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_HANDCARDS_CHANGED, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
                         CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_PUBLICDECK_CHANGED, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
+
+                        if (player.Index != 0)
+                            player.UseCard(player.HandCards.CardArray[0]);
                     },
 
                     // 玩家游戏开始响应事件
@@ -95,5 +104,7 @@ namespace XSEngine.CoreSimple.Poker
                 playerMgr.AddPlayer(newPlayer);
             }
         }
+        /// <summary> 别忘了每帧更新 </summary>
+        public void Update() => this.Mgr.Update(this.Mgr);
     }
 }

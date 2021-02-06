@@ -1,3 +1,5 @@
+using System;
+
 namespace XSEngine.Core
 {
     /// <summary> ui刷新事件的参数类型 </summary>
@@ -8,7 +10,7 @@ namespace XSEngine.Core
     }
 
     /// <summary> ui刷新事件 </summary>
-    public class CoreUIEmitter : Emitter<string, CoreUIEmitterData, bool>
+    public class CoreUIEmitter : Emitter<string, Action<CoreUIEmitterData>>
     {
         private static CoreUIEmitter msInstance;
 		public static CoreUIEmitter Instance 

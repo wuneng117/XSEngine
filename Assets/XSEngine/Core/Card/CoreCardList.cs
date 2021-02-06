@@ -16,7 +16,7 @@ namespace XSEngine.Core
     public abstract class CoreCardListBase
     {
         /// <summary> 列表里的卡 </summary>
-        protected List<CoreCardBase> CardArray { get; } = new List<CoreCardBase>();
+        public List<CoreCardBase> CardArray { get; } = new List<CoreCardBase>();
 
         /// <summary>
         /// CardArray.Count的最大值
@@ -70,7 +70,6 @@ namespace XSEngine.Core
         }
 
         /************************* 封装list begin ***********************/
-        
         public int Count { get => this.CardArray.Count; }
         public void Add(CoreCardBase item) { if (item != null) this.CardArray.Add(item); }
         public void Add(List<CoreCardBase> list) => this.CardArray.AddRange(list);

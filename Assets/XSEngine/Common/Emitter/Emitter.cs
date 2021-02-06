@@ -13,29 +13,29 @@ namespace XSEngine
     // }
     //  class Trigger1 
     //  {
-    //      public Trigger(Emitter<TriggerBaseType, HealReleaseData> emitter)
+    //      public Trigger(Emitter<TriggerBaseType, Action<HealReleaseData>> emitter)
     //      {
     //          emitter.on(TriggerBaseType.OnApplyDamage, this.onHeal1);
     //      }
-    //      void onHeal1(XSReleaseData heal) 
+    //      void onHeal1(HealReleaseData heal) 
     //      {
     //          Debug.Log("OnApplyDamage");
     //      }
     //  }
     //  class Trigger2
     //  {
-    //      public Trigger(Emitter<TriggerBaseType, HealReleaseData> emitter)
+    //      public Trigger(Emitter<TriggerBaseType, Action<HealReleaseData>> emitter)
     //      {
     //          emitter.on(TriggerBaseType.OnCauseDamage, this.onHeal2);
     //      }
-    //      void onHeal2(XSReleaseData heal) 
+    //      void onHeal2(HealReleaseData heal) 
     //      {
     //          Debug.Log("OnCauseDamage");
     //      }
     //  }
     //  public main() 
     //  {
-    //      Emitter<TriggerBaseType, HealReleaseData> emitter;
+    //      Emitter<TriggerBaseType, Action<HealReleaseData>> emitter;
     //      var trigger1 = new Trigger(emitter);
     //      var trigger2 = new Trigger(emitter);
     //      var data = new HealReleaseData();
@@ -44,16 +44,17 @@ namespace XSEngine
     //  }
     /// </summary>
     /// <typeparam name="TYPE">事件类型，通常是字符串</typeparam>
-    /// <typeparam name="DATA">事件回调带的参数类型</typeparam>
-    public class Emitter<TYPE, DATA, TRESULT>
+    /// <typeparam name="T">回调函数类型</typeparam>
+    public class Emitter<TYPE, T> where T : Delegate
     {
-        private Dictionary<TYPE, EmitterItems<DATA, TRESULT>> _emitList;
+        private Dictionary<TYPE, EmitterItems<T>> _emitList;
+
         /// <summary>
         /// 构造函数
         /// </summary>
         public Emitter()
         {
-            this._emitList = new Dictionary<TYPE, EmitterItems<DATA, TRESULT>>();
+            this._emitList = new Dictionary<TYPE, EmitterItems<T>>();
         }
 
         /// <summary>
@@ -63,11 +64,11 @@ namespace XSEngine
         /// <param name="callback">事件回调</param>
         /// <param name="priority">优先级，同一事件中优先级从高到低依次调用</param>
         /// <param name="target"></param>
-        public void On(TYPE type, Func<DATA, TRESULT> callback, int priority = 0, object target = null)
+        public void On(TYPE type, T callback, int priority = 65536, object target = null)
         {
             if (this._emitList.ContainsKey(type) == false)
             {
-                this._emitList[type] = new EmitterItems<DATA, TRESULT>();
+                this._emitList[type] = new EmitterItems<T>();
             }
             this._emitList[type].SetSlot(callback, priority, target);
         }
@@ -76,11 +77,11 @@ namespace XSEngine
         /// 触发事件回调
         /// </summary>
         /// <typeparam name="type">事件类型，通常是字符串</typeparam>
-        /// <param name="data">事件回调带的参数</param>
-        public void Emit(TYPE type, DATA data)
+        /// <param name="parameters">事件回调带的参数</param>
+        public void Emit(TYPE type, params object[] parameters)
         {
             if (this._emitList.ContainsKey(type))
-                this._emitList[type].Emit(data);
+                this._emitList[type].Emit(parameters);
         }
         
         /// <summary>
@@ -100,7 +101,7 @@ namespace XSEngine
         /// </summary>
         /// <typeparam name="type">事件类型，通常是字符串</typeparam>
         /// <param name="callback">事件回调</param>
-        public void Off(TYPE type, Func<DATA, TRESULT> callback)
+        public void Off(TYPE type, T callback)
         {
             if (this._emitList.ContainsKey(type) == false)
                 return;

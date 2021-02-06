@@ -43,6 +43,12 @@ namespace XSEngine.Core
             this.ActionOnTurnBegin = ActionOnTurnBegin;
             this.ActionOnTurnEnd = ActionOnTurnEnd;
             this.FuncCheckGameEnd = FuncCheckGameEnd;
+
+            //phase类注册GameEvent
+            CorePhaseGameStart.Instance.InitEvent();
+            CorePhaseGameEnd.Instance.InitEvent();
+            CorePhaseTurnBegin.Instance.InitEvent();
+            CorePhaseTurnEnd.Instance.InitEvent();
             return true;
         }
 
@@ -71,7 +77,7 @@ namespace XSEngine.Core
         public virtual void GameStart()
         {
             this.ActionOnGameStart?.Invoke(this);
-            this.Change<CoreBattleMgrBase>(CoreManagerFactory.CreatePhaseGameStart<CorePhaseGameStart>(), this);
+            this.Change<CoreBattleMgrBase>(CorePhaseGameStart.Instance, this);
         }
 
         /// <summary>
@@ -97,7 +103,7 @@ namespace XSEngine.Core
         public virtual void GameEnd()
         {
             this.ActionOnGameEnd?.Invoke(this);
-            this.Change<CoreBattleMgrBase>(CoreManagerFactory.CreatePhaseGameEnd<CorePhaseGameEnd>(), this);
+            this.Change<CoreBattleMgrBase>(CorePhaseGameEnd.Instance, this);
         }
 
         protected Action<CoreBattleMgrBase> ActionOnTurnBegin { get; set; }
@@ -106,7 +112,7 @@ namespace XSEngine.Core
         {
             this.ActionOnTurnBegin?.Invoke(this);
             this.AddRound();
-            this.Change<CoreBattleMgrBase>(CoreManagerFactory.CreatePhaseTurnBegin<CorePhaseTurnBegin>(), this);
+            this.Change<CoreBattleMgrBase>(CorePhaseTurnBegin.Instance, this);
         }
 
         protected Action<CoreBattleMgrBase> ActionOnTurnEnd { get; set; }
@@ -114,7 +120,7 @@ namespace XSEngine.Core
         public virtual void TurnEnd()
         {
             this.ActionOnTurnEnd?.Invoke(this);
-            this.Change<CoreBattleMgrBase>(CoreManagerFactory.CreatePhaseTurnEnd<CorePhaseTurnEnd>(), this);
+            this.Change<CoreBattleMgrBase>(CorePhaseTurnEnd.Instance, this);
         }
         /*************************  战斗阶段管理 end  ***********************/
     }

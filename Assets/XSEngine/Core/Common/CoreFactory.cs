@@ -15,6 +15,9 @@ namespace XSEngine.Core
             ret.PlayerIndex = playerIndex;
             return ret;
         }
+
+        // GameEvent事件
+        public static CoreGameEventEmitter CreateGameEventEmitter() => new CoreGameEventEmitter();
         /************************* 所有框架内的对象都是由工厂模式创建的  end  ***********************/
     }
 }
