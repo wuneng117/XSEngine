@@ -80,3 +80,8 @@ crashlytics-build.properties
 /.vscode/solution-explorer/template-list.json
 /.vscode/solution-explorer/template-parameters.js
 *.meta
+/*.sln
+/Assembly-CSharp.csproj
+/Assembly-CSharp.csproj.user
+/Assembly-CSharp-Editor.csproj
+/UserSettings
