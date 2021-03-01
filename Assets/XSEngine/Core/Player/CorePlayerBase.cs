@@ -22,13 +22,27 @@ namespace XSEngine.Core
 
         /// <summary> 玩家做一些游戏操作的接口 </summary>
         protected CoreITurnTrigger TurnTrigger { get; set; }
-        /// <summary> GameEventPlayer事件分发，因为很多响应事件有严格的优先级要求 </summary>
-        protected Emitter<string, Action> EventEmitter {get; set; }
-        protected CoreCardDeckBase Deck { get; } = CoreCardFactory.CreateCardDeck<CoreCardDeck>(); // 牌组
-        public CoreCardDeckBase PublicDeck { get; set; } // 公共牌组
-        public CoreCardListBase HandCards { get; } = CoreCardFactory.CreateCardList<CoreCardList>(); // 手牌
-        public CoreCardListBase PlayAreaCards { get; set; } = CoreCardFactory.CreateCardList<CoreCardList>();// 出牌区
-        protected CoreCardListBase DisCards { get; } = CoreCardFactory.CreateCardList<CoreCardList>(); // 弃牌堆
+
+        /// <summary> GameEventPlayer.Event事件分发，因为很多响应事件有严格的优先级要求 </summary>
+        protected Emitter<GameEventPlayer.Event, Action> EventEmitter {get; set; }
+
+        /// <summary> GameEventPlayer.CardEvent事件分发，因为很多响应事件有严格的优先级要求 </summary>
+        protected Emitter<GameEventPlayer.CardEvent, Action<CoreCardBase>> CardEventEmitter {get; set; }
+        
+        /// <summary> 牌组 </summary>
+        protected CoreCardDeckBase Deck { get; set; }
+
+        /// <summary> 公共牌组 </summary>
+        public CoreCardDeckBase PublicDeck { get; set; }
+
+        /// <summary> 手牌 </summary>
+        public CoreCardListBase HandCards { get; protected set;}
+
+        /// <summary> 出牌区 </summary>
+        public CoreCardListBase PlayAreaCards { get; set; }
+
+        /// <summary> 弃牌堆 </summary>
+        protected CoreCardListBase DisCards { get; set; }
 
         /// <summary> 初始化 </summary>
         /// <param name="turnTrigger">玩家做一些游戏操作的接口</param>
@@ -46,9 +60,17 @@ namespace XSEngine.Core
             Debug.Assert(turnTrigger != null);
             (this.Name, this.Index, this.TurnTrigger) = ("No." + index, index, turnTrigger);
             this.EventEmitter = CorePlayerFactory.CreateGameEventPlayerEmitter();
-            this.PublicDeck = publicDeck ?? CoreCardFactory.CreateCardDeck<CoreCardDeck>();
+            this.CardEventEmitter = CorePlayerFactory.CreateGamEventPlayeeCardrEmitter();
+
+            this.Deck = CoreCardFactory.CreateCardDeck<CoreCardDeck>(this);
+            this.PublicDeck = publicDeck ?? CoreCardFactory.CreateCardDeck<CoreCardDeck>(this);
+            this.HandCards = CoreCardFactory.CreateCardList<CoreCardList>(this);
+            this.PlayAreaCards = CoreCardFactory.CreateCardList<CoreCardList>(this);
+            this.DisCards = CoreCardFactory.CreateCardList<CoreCardList>(this);
+
             this.FuncCanUseCard = FuncCanUseCard;
             this.ActionOnUseCard = ActionOnUseCard;
+            this.InitUseCard();
             this.ActionOnGameStart = ActionOnGameStart;
             this.InitOnGameStart();
             this.ActionOnGameEnd = ActionOnGameEnd;
@@ -70,7 +92,7 @@ namespace XSEngine.Core
         protected void DisCard(CoreCardBase card)
         {
             this.DisCards.Add(card);
-            CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_DISCARDS_CHANGED, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(this.Index));
+            UIEmitter.Instance.Emit(UIEmitter.UI_DISCARDS_CHANGED, UIEmitterFactory.CreateUIEmitterData<UIEmitterData>(this.Index));
         }
 
         /// <summary>
@@ -89,13 +111,18 @@ namespace XSEngine.Core
         /// </summary>
         /// <param name="card"></param>
         protected Action<CorePlayerBase, CoreCardBase> ActionOnUseCard { get; set; }
+        protected virtual void InitUseCard() 
+        {
+            this.CardEventEmitter.On(GameEventPlayer.CardEvent.USE_CARD, (card) => this.ActionOnUseCard?.Invoke(this, card), GameEventPlayer.Priority.UseCard.ACTION);
+            this.CardEventEmitter.On(GameEventPlayer.CardEvent.USE_CARD, (card) => this.TurnTrigger.UseCard(card), GameEventPlayer.Priority.UseCard.TURN_TRIGGER_USE_CARD);
+        } 
+
         public virtual bool UseCard(CoreCardBase card)
         {
             if (!this.CanUseCard(card))
                 return false;
 
-            this.ActionOnUseCard?.Invoke(this, card);
-            this.TurnTrigger.UseCard(card);
+            this.CardEventEmitter.Emit(GameEventPlayer.CardEvent.USE_CARD, card);
             return true;
         }
         /************************* 用户回合响应 begin ***********************/
@@ -129,5 +156,33 @@ namespace XSEngine.Core
         /// <summary> 看看游戏是不是结束了 </summary>
         public void TryGameEnd() => this.TurnTrigger.TryGameEnd();
         /************************* 用户操作  end  ***********************/
+
+        /************************* 辅助函数 begin ***********************/
+        /// <summary>
+        /// 注册在哪些阶段发送UI事件
+        /// </summary>
+        /// <param name="gameEvent">哪个阶段事件</param>
+        /// <param name="uiEvents">发送的ui事件列表</param>
+        protected void RegisterUIEvent(Core.GameEventPlayer.Event gameEvent, params string[] uiEvents)
+        {
+            var priority = 0;
+            switch (gameEvent)
+            {
+                default:
+                case Core.GameEventPlayer.Event.ON_GAME_START: priority = Core.GameEventPlayer.Priority.GameStart.UI; break;
+                case Core.GameEventPlayer.Event.ON_GAME_END: priority = Core.GameEventPlayer.Priority.GameEnd.UI; break;
+                case Core.GameEventPlayer.Event.ON_TURN_BEGIN: priority = Core.GameEventPlayer.Priority.TurnBegin.UI; break;
+                case Core.GameEventPlayer.Event.ON_TURN_END: priority = Core.GameEventPlayer.Priority.TurnEnd.UI; break;
+                case Core.GameEventPlayer.Event.USE_CARD: priority = Core.GameEventPlayer.Priority.UseCard.UI; break;
+            }
+
+            this.EventEmitter.On(gameEvent, () =>
+            {
+                var data = UIEmitterFactory.CreateUIEmitterData<UIEmitterData>(this.Index);
+                foreach (var uiEvent in uiEvents)
+                    UIEmitter.Instance.Emit(uiEvent, data);
+            }, priority);
+        }
+        /************************* 辅助函数  end  ***********************/
     }
 }

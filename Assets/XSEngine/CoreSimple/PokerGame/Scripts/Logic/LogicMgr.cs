@@ -36,20 +36,20 @@ namespace XSEngine.CoreSimple.Poker
             this.Mgr.SetPlayerMgr(playerMgr);
 
             // 生成公共牌堆，所有玩家共用一个，麻将一共136张
-            this.PublicDeck = CoreCardFactory.CreateCardDeck<CoreCardDeck>();
+            this.PublicDeck = CoreCardFactory.CreateCardDeck<CoreCardDeck>(null);
             for (var i = 0; i < LogicDefine.START_PUBLIC_CARDS; i++)
             {
                 // 每种4张，共34种
                 var index = (int)(i/4);
-                var card = CoreCardFactory.CreateCard<CoreCard>(index, "No." + index);
+                var card = CoreCardFactory.CreateCard<CoreCard>(index, "No." + index, null);
                 this.PublicDeck.Add(card);
             }
 
             // 生成出牌区，所有玩家共用一个
-            this.PlayAreaCards = CoreCardFactory.CreateCardList<CoreCardList>();
+            this.PlayAreaCards = CoreCardFactory.CreateCardList<CoreCardList>(null);
 
             // 生成玩家，生成最大数量
-            for (var i = 0; i < Core.Const.Config.PLAYER_NUM_MAX; i++)
+            for (var i = 0; i < Const.Config.PLAYER_NUM_MAX; i++)
             {
                 // 这个比较特殊，玩家共用一个出牌堆
                 var newPlayer = CorePlayerFactory.CreatePlayer<CorePlayer>(
@@ -64,8 +64,8 @@ namespace XSEngine.CoreSimple.Poker
                         player.HandCards.Add(player.PublicDeck.RemoveTop());
                         player.TryGameEnd();
                         // 发送事件刷新UI
-                        CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_HANDCARDS_CHANGED, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
-                        CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_PUBLICDECK_CHANGED, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
+                        UIEmitter.Instance.Emit(UIEmitter.UI_HANDCARDS_CHANGED, UIEmitterFactory.CreateUIEmitterData<UIEmitterData>(player.Index));
+                        UIEmitter.Instance.Emit(UIEmitter.UI_PUBLICDECK_CHANGED, UIEmitterFactory.CreateUIEmitterData<UIEmitterData>(player.Index));
 
                         if (player.Index != 0)
                             player.UseCard(player.HandCards.CardArray[0]);
@@ -79,8 +79,8 @@ namespace XSEngine.CoreSimple.Poker
                         player.HandCards.Add(player.PublicDeck.RemoveTop(LogicDefine.START_HAND_CARDS));
 
                         // 发送事件刷新UI
-                        CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_HANDCARDS_CHANGED, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
-                        CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_PUBLICDECK_CHANGED, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
+                        UIEmitter.Instance.Emit(UIEmitter.UI_HANDCARDS_CHANGED, UIEmitterFactory.CreateUIEmitterData<UIEmitterData>(player.Index));
+                        UIEmitter.Instance.Emit(UIEmitter.UI_PUBLICDECK_CHANGED, UIEmitterFactory.CreateUIEmitterData<UIEmitterData>(player.Index));
                     },
 
                     // 玩家能否使用这张卡的响应事件
@@ -95,8 +95,8 @@ namespace XSEngine.CoreSimple.Poker
                         // 使用的牌打到出牌区
                         player.PlayAreaCards.Add(card);
                         // 发送事件刷新UI
-                        CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_HANDCARDS_CHANGED, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
-                        CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_PLAYAREACARDS_CHANGED, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
+                        UIEmitter.Instance.Emit(UIEmitter.UI_HANDCARDS_CHANGED, UIEmitterFactory.CreateUIEmitterData<UIEmitterData>(player.Index));
+                        UIEmitter.Instance.Emit(UIEmitter.UI_PLAYAREACARDS_CHANGED, UIEmitterFactory.CreateUIEmitterData<UIEmitterData>(player.Index));
                     }
                 );
 

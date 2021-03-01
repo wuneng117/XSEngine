@@ -13,24 +13,23 @@ namespace XSEngine.Core
         public override void InitEvent()
         {
             base.InitEvent();
+            // 通知当前玩家onturnend
             this.EventEmitter.On(GameEventPhase.Event.ON_ENTER, mgr =>
             {
                 var player = mgr.PlayerMgr.GetCurPlayer();
                 player.OnTurnEnd();
             }, GameEventPhase.Priority.TurnEnd.CURPLAYER_ON_TURN_END);
 
-            this.EventEmitter.On(GameEventPhase.Event.ON_ENTER, mgr => 
-            {
-                var player = mgr.PlayerMgr.GetCurPlayer();
-                CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_PLAYER_TURN_END, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
-            }, GameEventPhase.Priority.GameStart.UI);
+            this.EventEmitter.On(GameEventPhase.Event.ON_ENTER, 
+                                mgr => UIEmitter.Instance.Emit(UIEmitter.UI_PLAYER_TURN_END, UIEmitterFactory.CreateUIEmitterData<UIEmitterData>(mgr.PlayerMgr.GetCurPlayer()?.Index)), 
+                                GameEventPhase.Priority.GameStart.UI);
 
             // 等OnEnter操作完成后切换到turnbegin
             this.EventEmitter.On(GameEventPhase.Event.ON_ENTER, mgr =>
             {
                 mgr.PlayerMgr.SwitchPlayer();
                 mgr.TurnBegin();
-            } ,  GameEventPhase.Priority.TurnEnd.PHASE_CHANGE);
+            }, GameEventPhase.Priority.TurnEnd.PHASE_CHANGE);
         }
     }
 }

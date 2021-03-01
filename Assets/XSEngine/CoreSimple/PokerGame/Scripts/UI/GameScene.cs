@@ -3,13 +3,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using XSEngine.CoreSimple.Poker;
 using System.Collections.Generic;
+using XSEngine;
 
 public class GameScene : MonoBehaviour
 {
     public GameObject playerPrefab; // 玩家预制体
     public GameObject cardPrefab;   // 卡牌预制体
     public GameObject canvas;   // ui根节点
-    public CoreConfig config;   // 配置文件
+    public Config config;   // 配置文件
     public GameObject panelPlayerArea;  // 出牌区节点
     public Text textPublickDeckNum; // 公共牌堆数量显示
     [SerializeField]
@@ -22,16 +23,16 @@ public class GameScene : MonoBehaviour
         // 初始化游戏
         InitGame();
         // 注册UI事件
-        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_PLAYAREACARDS_CHANGED, (data) => this.RefreshPlayerArea(), 0, this);
+        UIEmitter.Instance.On(UIEmitter.UI_PLAYAREACARDS_CHANGED, (data) => this.RefreshPlayerArea(), 0, this);
         // 刷新公共牌堆数量
-        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_PUBLICDECK_CHANGED, (data) => this.textPublickDeckNum.text = this.LogicMgr.PublicDeck.Count.ToString(), 0, this);
+        UIEmitter.Instance.On(UIEmitter.UI_PUBLICDECK_CHANGED, (data) => this.textPublickDeckNum.text = this.LogicMgr.PublicDeck.Count.ToString(), 0, this);
     }
 
     void OnDestroy()
     {
         // 注销UI事件
-        CoreUIEmitter.Instance.Off(CoreUIEmitter.UI_PLAYAREACARDS_CHANGED, this);
-        CoreUIEmitter.Instance.Off(CoreUIEmitter.UI_PUBLICDECK_CHANGED, this);
+        UIEmitter.Instance.Off(UIEmitter.UI_PLAYAREACARDS_CHANGED, this);
+        UIEmitter.Instance.Off(UIEmitter.UI_PUBLICDECK_CHANGED, this);
     }
 
     /// <summary> 初始化游戏 </summary>

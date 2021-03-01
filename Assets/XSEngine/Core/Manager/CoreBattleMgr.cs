@@ -77,8 +77,9 @@ namespace XSEngine.Core
         public virtual void GameStart()
         {
             this.ActionOnGameStart?.Invoke(this);
-            this.Change(CorePhaseGameStart.Instance, this);
+            this.ChangeGameStart();
         }
+        protected virtual void ChangeGameStart() => this.Change(CorePhaseGameStart.Instance, this);
 
         /// <summary>
         /// 尝试结束游戏
@@ -103,8 +104,9 @@ namespace XSEngine.Core
         public virtual void GameEnd()
         {
             this.ActionOnGameEnd?.Invoke(this);
-            this.Change(CorePhaseGameEnd.Instance, this);
+            this.ChangeGameEnd();
         }
+        protected virtual void ChangeGameEnd() => this.Change(CorePhaseGameEnd.Instance, this);
 
         protected Action<CoreBattleMgrBase> ActionOnTurnBegin { get; set; }
         /// <summary> 回合开始 </summary>
@@ -112,16 +114,18 @@ namespace XSEngine.Core
         {
             this.ActionOnTurnBegin?.Invoke(this);
             this.AddRound();
-            this.Change(CorePhaseTurnBegin.Instance, this);
+            this.ChangeTurnBegin();
         }
+        protected virtual void ChangeTurnBegin() => this.Change(CorePhaseTurnBegin.Instance, this);
 
         protected Action<CoreBattleMgrBase> ActionOnTurnEnd { get; set; }
         /// <summary> 回合结束 </summary>
         public virtual void TurnEnd()
         {
             this.ActionOnTurnEnd?.Invoke(this);
-            this.Change(CorePhaseTurnEnd.Instance, this);
+            this.ChangeTurnEnd();
         }
+        protected virtual void ChangeTurnEnd() => this.Change(CorePhaseTurnEnd.Instance, this);
         /*************************  战斗阶段管理 end  ***********************/
     }
 }

@@ -13,18 +13,16 @@ namespace XSEngine.Core
         public override void InitEvent()
         {
             base.InitEvent();
-
+            // 通知当前玩家onturnbegin
             this.EventEmitter.On(GameEventPhase.Event.ON_ENTER, mgr =>
             {
                 var player = mgr.PlayerMgr.GetCurPlayer();
                 player.OnTurnBegin();
             }, GameEventPhase.Priority.TurnBegin.CURPLAYER_ON_TURN_BEGIN);
 
-            this.EventEmitter.On(GameEventPhase.Event.ON_ENTER, mgr =>
-            {
-                var player = mgr.PlayerMgr.GetCurPlayer();
-                CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_PLAYER_TURN_BEGIN, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(player.Index));
-            },  GameEventPhase.Priority.TurnBegin.UI);
+            this.EventEmitter.On(GameEventPhase.Event.ON_ENTER, 
+                                mgr => UIEmitter.Instance.Emit(UIEmitter.UI_PLAYER_TURN_BEGIN, UIEmitterFactory.CreateUIEmitterData<UIEmitterData>(mgr.PlayerMgr.GetCurPlayer()?.Index)),
+                                GameEventPhase.Priority.TurnBegin.UI);
         }
 
         // /// <summary> 状态退出 </summary>

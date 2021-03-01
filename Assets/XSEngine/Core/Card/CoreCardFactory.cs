@@ -11,11 +11,12 @@ namespace XSEngine.Core
         /// </summary>
         /// <param name="id">卡牌id</param>
         /// <param name="name">卡牌名字</param>
+        /// <param name="player">所属玩家</param>
         /// <returns></returns>
-        public static T CreateCard<T>(int id, string name) where T : CoreCardBase, new()
+        public static T CreateCard<T>(int id, string name, CorePlayerBase player) where T : CoreCardBase, new()
         {
             var ret = new T();
-            ret.Init(id, name);
+            ret.Init(id, name, player);
             return ret;
         }
 
@@ -23,13 +24,23 @@ namespace XSEngine.Core
         /// 工厂模式创建CardDeck
         /// </summary>
         /// <returns></returns>
-        public static T CreateCardDeck<T>() where T : CoreCardDeckBase, new() => new T();
+        public static T CreateCardDeck<T>(CorePlayerBase player) where T : CoreCardDeckBase, new()
+        {
+            var ret = new T();
+            ret.Init(player);
+            return ret;
+        }
 
         /// <summary>
         /// 工厂模式创建CardList
         /// </summary>
         /// <returns></returns>
-        public static T CreateCardList<T>() where T : CoreCardListBase, new() => new T();
+        public static T CreateCardList<T>(CorePlayerBase player) where T : CoreCardListBase, new()
+        {
+            var ret = new T();
+            ret.Init(player);
+            return ret;
+        }
         /************************* 所有框架内的对象都是由工厂模式创建的  end  ***********************/
     }
 }

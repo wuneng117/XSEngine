@@ -12,7 +12,9 @@ namespace XSEngine.Core
         public override void InitEvent()
         {
             base.InitEvent();
-            this.EventEmitter.On(GameEventPhase.Event.ON_ENTER, mgr => CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_PLAYER_GAME_END, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(-1)),  GameEventPhase.Priority.GameEnd.UI);
+            this.EventEmitter.On(GameEventPhase.Event.ON_ENTER, 
+                                mgr => UIEmitter.Instance.Emit(UIEmitter.UI_PLAYER_GAME_END, UIEmitterFactory.CreateUIEmitterData<UIEmitterData>(-1)),  
+                                GameEventPhase.Priority.GameEnd.UI);
         }
     }
 }

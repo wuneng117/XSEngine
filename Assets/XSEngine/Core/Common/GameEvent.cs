@@ -2,13 +2,13 @@ namespace XSEngine.Core
 {
     namespace GameEvent
     {
-        public class Event
-        {
-            public static string ON_GAME_START = "ON_GAME_START";
-            public static string ON_GAME_END = "ON_GAME_END";
-            public static string ON_TURN_BEGIN = "ON_TURN_BEGIN";
-            public static string ON_TURN_END = "ON_TURN_END";
-        }
+        // public class Event
+        // {
+        //     public static string ON_GAME_START = "ON_GAME_START";
+        //     public static string ON_GAME_END = "ON_GAME_END";
+        //     public static string ON_TURN_BEGIN = "ON_TURN_BEGIN";
+        //     public static string ON_TURN_END = "ON_TURN_END";
+        // }
 
     //     namespace Priority
     //     {

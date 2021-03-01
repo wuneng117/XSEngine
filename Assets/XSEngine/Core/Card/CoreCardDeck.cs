@@ -24,21 +24,33 @@ namespace XSEngine.Core
         {
             count = Math.Min(count, this.CardArray.Count);
             var beginIndex = this.CardArray.Count - count;
-            var ret = this.CardArray.GetRange(beginIndex, count);
+            var cards = this.CardArray.GetRange(beginIndex, count);
             this.CardArray.RemoveRange(beginIndex, count);
-            return ret;
+            cards.ForEach(card => card.CurPlayer = null);
+            return cards;
         }
 
         /// <summary>
         /// 牌组底放入一张卡
         /// </summary>
         /// <param name="card">放入的一张卡</param>
-        public void AddBottom(CoreCardBase card) { if(card != null) this.CardArray.Insert(0, card); }
+        public void AddBottom(CoreCardBase card)
+        {
+            if (card != null)
+            {
+                this.CardArray.Insert(0, card);
+                card.CurPlayer = this.Player;
+            }
+        }
 
         /// <summary>
         /// 牌组底放入一些卡
         /// </summary>
         /// <param name="cards">放入的一些卡</param>
-        public void AddBottom(List<CoreCardBase> cards) => this.CardArray.InsertRange(0, cards);
+        public void AddBottom(List<CoreCardBase> cards)
+        {
+            this.CardArray.InsertRange(0, cards);
+            cards.ForEach(card => card.CurPlayer = this.Player);
+        }
     }
 }

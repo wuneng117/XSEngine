@@ -1,21 +1,12 @@
 using UnityEngine;
 
-namespace XSEngine.Core
+namespace XSEngine
 {
-    public interface ICoreConfig
-    {
-        int START_HAND_CARDS { get; }
-        int PLAYER_NUM_DEFAULT { get; }
-        int PLAYER_NUM_MIN { get; }
-        int PLAYER_NUM_MAX { get; }
-        bool ISLOG { get; }
-    }
-
     /// <summary>
     /// 游戏中的常量定义
     /// 把这个脚本挂到场景节点上，通过脚本设置初始值，然后把这个脚本赋值给CoreConstant
     /// </summary>
-    public class CoreConfig : MonoBehaviour, ICoreConfig
+    public partial class Config : MonoBehaviour
     {
         /// <summary> 起始手牌张数 </summary>
         public int sTART_HAND_CARDS = 5;

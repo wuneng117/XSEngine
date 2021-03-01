@@ -10,7 +10,10 @@ namespace XSEngine.Core
     {
         /************************* 所有框架内的对象都是由工厂模式创建的 begin ***********************/
         // GameEvent事件
-        public static Emitter<string, Action> CreateGameEventPlayerEmitter() => new Emitter<string, Action>();
+        public static Emitter<GameEventPlayer.Event, Action> CreateGameEventPlayerEmitter() => new Emitter<GameEventPlayer.Event, Action>();
+
+        // GameCardEvent事件
+        public static Emitter<GameEventPlayer.CardEvent, Action<CoreCardBase>> CreateGamEventPlayeeCardrEmitter() => new Emitter<GameEventPlayer.CardEvent, Action<CoreCardBase>>();
 
         /// <summary>
         /// 工厂模式创建
@@ -27,15 +30,13 @@ namespace XSEngine.Core
                                         Action<CorePlayerBase> ActionOnGameEnd = null,
                                         Action<CorePlayerBase> ActionOnTurnBegin = null,
                                         Action<CorePlayerBase> ActionOnTurnEnd = null
-        ) where T : CorePlayer, new()
+        ) where T : CorePlayerBase, new()
         {
             if (index < 0 || turnTrigger == null)
                 return null;
 
             var ret = new T();
             ret.Init(index, turnTrigger, publicDeck, FuncCanUseCard, ActionOnUseCard, ActionOnGameStart, ActionOnGameEnd, ActionOnTurnBegin, ActionOnTurnEnd);
-            // // 没有牌组，所有卡入手牌
-            // role.GetCardIdArray().ForEach(id => this.HandCards.Add(BladeCard.Create(CardDataManager.Instance.GetItem(id))));
             return ret;
         }
 
@@ -43,7 +44,7 @@ namespace XSEngine.Core
         /// 工厂模式创建
         /// </summary>
         /// <returns></returns>
-        public static T CreatePlayerMgr<T>() where T : CorePlayerMgr, new()
+        public static T CreatePlayerMgr<T>() where T : CorePlayerMgrBase, new()
         {
             var ret = new T();
             return ret;

@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace XSEngine
 {
@@ -25,12 +26,14 @@ namespace XSEngine
             this.Val = 0;  // 起始是没有可以用的
         }
 
-        /// <summary> 上限+1，并回复费用到最大值 </summary>
-        public void Recover()
-        {
-            this.Limit = Math.Min(this.Limit + 1, Const.Config.MONEY_LIMIT_MAX);
-            this.Val = this.Limit;
-        }
+        /// <summary> 回复费用到最大值 </summary>
+        public void Recover() => this.Val = this.Limit;
+
+        /// <summary> 上限+val </summary>
+        public void addLimit(int val) => this.Limit = Mathf.Clamp(this.Limit + val, 0, Const.Config.MONEY_LIMIT_MAX);
+
+        /// <summary> 是否达到上限 </summary>
+        public bool IsMax() => this.Limit == Const.Config.MONEY_LIMIT_MAX;
 
         /// <summary> 费用够不够 </summary>
         public bool CanCost(int cost) => this.Val >= cost;

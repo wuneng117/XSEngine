@@ -26,4 +26,8 @@
 ## Emitter
 通过system.Action，实现一个简单的nodejs的EventEmitter。
 
+# Q&A
+- 插件GDE窗口打不开,提示路径detiend  
+这是因为插件记录了上一次打开表格的绝对路径导致的,在需要打开的表格文件上右键用GDE重新打开就好了.
+
         

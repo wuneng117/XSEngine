@@ -15,7 +15,7 @@ namespace XSEngine.Core {
     public abstract class CorePhaseBase : IPhaseBase
     {
         /// <summary> GameEventPhase事件分发，因为很多响应事件有严格的优先级要求 </summary>
-        protected Emitter<string, Action<CoreBattleMgrBase>> EventEmitter {get; set; } = new Emitter<string, Action<CoreBattleMgrBase>>();
+        protected Emitter<GameEventPhase.Event, Action<CoreBattleMgrBase>> EventEmitter {get; set; } = new Emitter<GameEventPhase.Event, Action<CoreBattleMgrBase>>();
 
         /// <summary> 注册GameEvent </summary>
         public virtual void InitEvent() { }

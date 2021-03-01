@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using XSEngine;
 using XSEngine.Core;
 
 public class PlayerPanel : MonoBehaviour
@@ -12,31 +13,21 @@ public class PlayerPanel : MonoBehaviour
 
     private CorePlayer Player { get; set; }
 
-    public static string UI_PLAYER_TURNBEGIN = "UI_PLAYER_TURNBEGIN";
-    public static string UI_PLAYER_TURNEND = "UI_PLAYER_TURNEND";
-
-    /************************* 牌变动 begin ***********************/
-    public static string UI_DECK_CHANGED = "UI_DECK_CHANGED";
-    public static string UI_PUBLICDECK_CHANGED = "UI_PUBLICDECK_CHANGED";
-    public static string UI_HANDCARDS_CHANGED = "UI_HANDCARDS_CHANGED";
-    public static string UI_PLAYAREACARDS_CHANGED = "UI_PLAYAREACARDS_CHANGED";
-    public static string UI_DISCARDS_CHANGED = "UI_DISCARDS_CHANGED";
-    /************************* 牌变动  end  ***********************/
     // Start is called before the first frame update
     private void Awake()
     {
-        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_PLAYER_GAME_START, (data) => this.useCardTips.SetActive(this.Player.Index == data.PlayerIndex), 0, this);
-        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_PLAYER_TURN_BEGIN, (data) => this.useCardTips.SetActive(this.Player.Index == data.PlayerIndex), 0, this);
-        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_PLAYER_TURN_END, (data) => this.useCardTips.SetActive(this.Player.Index == data.PlayerIndex), 0, this);
-        CoreUIEmitter.Instance.On(CoreUIEmitter.UI_HANDCARDS_CHANGED, (data) => { if (this.Player.Index == data.PlayerIndex) this.RefreshPlayerHand(); }, 0, this);
+        UIEmitter.Instance.On(UIEmitter.UI_PLAYER_GAME_START, (data) => this.useCardTips.SetActive(this.Player.Index == data.PlayerIndex), 0, this);
+        UIEmitter.Instance.On(UIEmitter.UI_PLAYER_TURN_BEGIN, (data) => this.useCardTips.SetActive(this.Player.Index == data.PlayerIndex), 0, this);
+        UIEmitter.Instance.On(UIEmitter.UI_PLAYER_TURN_END, (data) => this.useCardTips.SetActive(this.Player.Index == data.PlayerIndex), 0, this);
+        UIEmitter.Instance.On(UIEmitter.UI_HANDCARDS_CHANGED, (data) => { if (this.Player.Index == data.PlayerIndex) this.RefreshPlayerHand(); }, 0, this);
     }
 
     private void OnDestroy()
     {
-        CoreUIEmitter.Instance.Off(CoreUIEmitter.UI_PLAYER_GAME_START, this);
-        CoreUIEmitter.Instance.Off(CoreUIEmitter.UI_PLAYER_TURN_BEGIN, this);
-        CoreUIEmitter.Instance.Off(CoreUIEmitter.UI_PLAYER_TURN_END, this);
-        CoreUIEmitter.Instance.Off(CoreUIEmitter.UI_HANDCARDS_CHANGED, this);
+        UIEmitter.Instance.Off(UIEmitter.UI_PLAYER_GAME_START, this);
+        UIEmitter.Instance.Off(UIEmitter.UI_PLAYER_TURN_BEGIN, this);
+        UIEmitter.Instance.Off(UIEmitter.UI_PLAYER_TURN_END, this);
+        UIEmitter.Instance.Off(UIEmitter.UI_HANDCARDS_CHANGED, this);
     }
 
     private void RefreshPlayerHand()

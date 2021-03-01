@@ -18,11 +18,25 @@ namespace XSEngine.Core
         /// <summary> 列表里的卡 </summary>
         public List<CoreCardBase> CardArray { get; } = new List<CoreCardBase>();
 
+        /// <summary> 当前所属玩家,没有的话为null </summary>
+        public CorePlayerBase Player {get; protected set; }
+
         /// <summary>
         /// CardArray.Count的最大值
         /// </summary>
         /// <param name="card"></param>
         public Func<int> FuncCountMax { protected get; set; }
+
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        /// <param name="player">当前所属玩家</param>
+        /// <returns></returns>
+        public virtual bool Init(CorePlayerBase player)
+        {
+            this.Player = player;
+            return true;
+        }
 
         /// <summary>
         /// 能不能放入这张卡
@@ -62,6 +76,7 @@ namespace XSEngine.Core
                     break;
 
                 var index = ThreadSafeRandom.ThisThreadsRandom.Next(this.CardArray.Count);
+                this.CardArray[index].CurPlayer = null;
                 ret.Add(this.CardArray[index]);
                 this.CardArray.RemoveAt(index);
             }
@@ -71,15 +86,29 @@ namespace XSEngine.Core
 
         /************************* 封装list begin ***********************/
         public int Count { get => this.CardArray.Count; }
-        public void Add(CoreCardBase item) { if (item != null) this.CardArray.Add(item); }
-        public void Add(List<CoreCardBase> list) => this.CardArray.AddRange(list);
+
+        public void Add(CoreCardBase card) 
+        { 
+            if (card != null) 
+            {
+                this.CardArray.Add(card); 
+                card.CurPlayer = this.Player;
+            }
+        }
+
+        public void Add(List<CoreCardBase> cards) 
+        {
+             this.CardArray.AddRange(cards);
+             cards.ForEach(card => card.CurPlayer = this.Player);
+        }
+
         public void Clear() => this.CardArray.Clear();
-        public bool Contains(CoreCardBase item) => this.CardArray.Contains(item);
+        public bool Contains(CoreCardBase card) => this.CardArray.Contains(card);
         public bool Exists(Predicate<CoreCardBase> match) => this.CardArray.Exists(match);
         public CoreCardBase Find(Predicate<CoreCardBase> match) => this.CardArray.Find(match);
         public List<CoreCardBase> FindAll(Predicate<CoreCardBase> match) => this.CardArray.FindAll(match);
         public void ForEach(Action<CoreCardBase> action) => this.CardArray.ForEach(action);
-        public bool Remove(CoreCardBase item) => this.CardArray.Remove(item);
+        public bool Remove(CoreCardBase card) => this.CardArray.Remove(card);
         public int RemoveAll(Predicate<CoreCardBase> match) => this.CardArray.RemoveAll(match);
         public void RemoveAt(int index) => this.CardArray.RemoveAt(index);
         public void RemoveRange(int index, int count) => this.CardArray.RemoveRange(index, count);

@@ -21,6 +21,5 @@ namespace XSEngine.Core {
         /// 尝试结束游戏
         /// </summary>
         void TryGameEnd();
-
     }
 }

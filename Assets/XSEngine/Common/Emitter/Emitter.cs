@@ -1,3 +1,4 @@
+using System.Linq;
 using System;
 using System.Collections.Generic;
 
@@ -113,7 +114,7 @@ namespace XSEngine
         /// 为事件取消回调，如果是匿名函数，就只能用target去查了
         /// </summary>
         /// <typeparam name="type">事件类型，通常是字符串</typeparam>
-        /// <param name="target"></param>
+        /// <param name="target">在哪个对象上注册</param>
         public void Off(TYPE type, object target)
         {
             if (this._emitList.ContainsKey(type) == false)
@@ -121,5 +122,11 @@ namespace XSEngine
 
             this._emitList[type].RemoveSlot(target);
         }
+
+        /// <summary>
+        /// 为事件取消回调
+        /// </summary>
+        /// <param name="target">在哪个对象上注册</param>
+        public void Off(object target) => this._emitList.Values.ToList().ForEach(emit => emit.RemoveSlot(target));
     }
 }

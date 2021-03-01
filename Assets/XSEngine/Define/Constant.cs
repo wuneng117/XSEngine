@@ -6,7 +6,9 @@ namespace XSEngine
     /// 
     public class Const
     {
-        public static IConfig Config;
-        public static void SetConfig(IConfig config) => Const.Config = config;
+        /// <summary> 游戏中的常量定义 </summary>
+        public static Config Config;
+        /// <summary> 设置常量参数 </summary>
+        public static void SetConfig(Config config) => Const.Config = config;
     }
 }

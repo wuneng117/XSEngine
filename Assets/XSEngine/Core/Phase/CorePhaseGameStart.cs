@@ -13,7 +13,9 @@ namespace XSEngine.Core
         {
             base.InitEvent();
             this.EventEmitter.On(GameEventPhase.Event.ON_ENTER, mgr => mgr.PlayerMgr.OnGameStart(), GameEventPhase.Priority.GameStart.PLAYERMGR_ON_GAME_START);
-            this.EventEmitter.On(GameEventPhase.Event.ON_ENTER, mgr => CoreUIEmitter.Instance.Emit(CoreUIEmitter.UI_PLAYER_GAME_START, CoreFactory.CreateUIEmitterData<CoreUIEmitterData>(-1)),  GameEventPhase.Priority.GameStart.UI);
+            this.EventEmitter.On(GameEventPhase.Event.ON_ENTER, 
+                                mgr => UIEmitter.Instance.Emit(UIEmitter.UI_PLAYER_GAME_START, UIEmitterFactory.CreateUIEmitterData<UIEmitterData>(-1)),  
+                                GameEventPhase.Priority.GameStart.UI);
             // 等操作完成后切换到turnbegin
             this.EventEmitter.On(GameEventPhase.Event.ON_ENTER, mgr => mgr.TurnBegin(),  GameEventPhase.Priority.GameStart.PHASE_CHANGE);
         }
